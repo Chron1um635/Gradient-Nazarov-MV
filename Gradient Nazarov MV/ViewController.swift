@@ -19,28 +19,41 @@ final class ViewController: UIViewController {
     
     @IBOutlet var colorfullView: UIView!
     
-    @IBAction func redSliderChange() {
-        redValueLabel.text = (round(redSlider.value * 100) / 100).formatted()
+    override func viewDidLoad() {
+        colorfullView.layer.cornerRadius = 10
         updateViewColor()
+        
+        redValueLabel.text = string(from: redSlider)
+        greenValueLabel.text = string(from: greenSlider)
+        blueValueLabel.text = string(from: blueSlider)
     }
-
-    @IBAction func greenSliderChange() {
-        greenValueLabel.text = (round(greenSlider.value * 100) / 100).formatted()
+    
+    
+    @IBAction func sliderAction(_ sender: UISlider) {
+        switch sender {
+        case redSlider:
+            redValueLabel.text = string(from: redSlider)
+        case greenSlider:
+            greenValueLabel.text = string(from: greenSlider)
+        default:
+            blueValueLabel.text = string(from: blueSlider)
+        }
+        
         updateViewColor()
-    }
-
-    @IBAction func blueSliderChange() {
-        blueValueLabel.text = (round(blueSlider.value * 100) / 100).formatted()
-        updateViewColor()
+        
     }
     
     private func updateViewColor() {
-        colorfullView.backgroundColor = .init(
+        colorfullView.backgroundColor = UIColor.init(
             red: CGFloat(redSlider.value),
             green: CGFloat(greenSlider.value),
             blue: CGFloat(blueSlider.value),
             alpha: 1
         )
+    }
+    
+    private func string(from slider: UISlider) -> String {
+        String(format: "%.2f", slider.value)
     }
     
 }

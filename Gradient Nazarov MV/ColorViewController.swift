@@ -19,8 +19,17 @@ final class ColorViewController: UIViewController {
     
     @IBOutlet var colorfullView: UIView!
     
+    var red: CGFloat!
+    var blue: CGFloat!
+    var green: CGFloat!
+    
     override func viewDidLoad() {
         colorfullView.layer.cornerRadius = 10
+        
+        redSlider.value = Float(red)
+        blueSlider.value = Float(blue)
+        greenSlider.value = Float(green)
+        
         updateViewColor()
         
         redValueLabel.text = string(from: redSlider)
@@ -33,15 +42,18 @@ final class ColorViewController: UIViewController {
         switch sender {
         case redSlider:
             redValueLabel.text = string(from: redSlider)
+            red = CGFloat(redSlider.value)
         case greenSlider:
             greenValueLabel.text = string(from: greenSlider)
+            green = CGFloat(greenSlider.value)
         default:
             blueValueLabel.text = string(from: blueSlider)
+            blue = CGFloat(blueSlider.value)
         }
         
         updateViewColor()
-        
     }
+    
     
     private func updateViewColor() {
         colorfullView.backgroundColor = UIColor.init(

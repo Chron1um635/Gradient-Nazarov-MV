@@ -154,7 +154,7 @@ extension ColorViewController: UITextFieldDelegate {
             }
         } else {
             showAlert(
-                with: "Введено не корректное значение",
+                with: "Введено некорректное значение",
                 andMessage: "Введите значение в диапазоне 0.0...1.0"
             )
         }

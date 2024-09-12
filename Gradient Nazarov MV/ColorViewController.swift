@@ -34,16 +34,11 @@ final class ColorViewController: UIViewController {
     override func viewDidLoad() {
         colorfullView.layer.cornerRadius = 10
         
-        mainViewColor.getRed(
-            &red,
-            green: &green,
-            blue: &blue,
-            alpha: nil
-        )
+        let ciColor = CIColor(color: mainViewColor)
 
-        redSlider.value = Float(red)
-        blueSlider.value = Float(blue)
-        greenSlider.value = Float(green)
+        redSlider.value = Float(ciColor.red)
+        blueSlider.value = Float(ciColor.blue)
+        greenSlider.value = Float(ciColor.green)
         
         updateViewColor()
         
@@ -101,7 +96,7 @@ final class ColorViewController: UIViewController {
     
     
     private func updateViewColor() {
-        colorfullView.backgroundColor = UIColor.init(
+        colorfullView.backgroundColor = UIColor(
             red: CGFloat(redSlider.value),
             green: CGFloat(greenSlider.value),
             blue: CGFloat(blueSlider.value),
@@ -131,14 +126,25 @@ final class ColorViewController: UIViewController {
 // MARK: - UITextFieldDelegate
 extension ColorViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
-        let value = Float(
-            textField.text?.replacingOccurrences(
-                of: ",",
-                with: "."
-            ) ?? ""
-        ) ?? 0
-        if value <= 1 {
-            switch textField {
+        guard let text = textField.text?.replacingOccurrences(
+            of: ",",
+            with: "."
+        ) else {
+            showAlert(
+                with: "Не верный формат!",
+                andMessage: "Пожалуйста, введите корректное значение"
+            )
+            return
+        }
+        
+        guard let value = Float(text), (0...1).contains(value) else {
+            showAlert(
+                with: "Введено некорректное значение",
+                andMessage: "Введите значение в диапазоне 0.0...1.0"
+            )
+            return
+        }
+        switch textField {
             case redValueTextField:
                 redSlider.setValue(value, animated: true)
                 redValueLabel.text = String(value)
@@ -152,12 +158,6 @@ extension ColorViewController: UITextFieldDelegate {
                 blueValueLabel.text = String(value)
                 updateViewColor()
             }
-        } else {
-            showAlert(
-                with: "Введено некорректное значение",
-                andMessage: "Введите значение в диапазоне 0.0...1.0"
-            )
-        }
     }
     
 }
@@ -166,7 +166,6 @@ extension ColorViewController: UITextFieldDelegate {
 extension ColorViewController {
     func addToolBar(_ textField: UITextField) {
         let toolBar = UIToolbar()
-        toolBar.barStyle = UIBarStyle.default
         toolBar.isTranslucent = true
         
         let spaceArea = UIBarButtonItem(systemItem: .flexibleSpace)
@@ -178,8 +177,6 @@ extension ColorViewController {
         )
         
         toolBar.setItems([spaceArea, doneButton], animated: false)
-        
-        toolBar.isUserInteractionEnabled = true
         toolBar.sizeToFit()
         
         textField.inputAccessoryView = toolBar
